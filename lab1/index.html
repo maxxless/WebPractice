@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>History API - Dive Into HTML5</title>
+    <link rel="stylesheet" href="">
+    <style>
+      .content {
+        border: 1px solid black;
+        padding: 0 10px;
+      }
+
+      .tablename {
+        background-color: #000000;
+        color: #FFFFFF;
+      }
+
+      p {
+        font-size: 18px;
+        word-spacing: 3px;
+        line-height: 1.4;
+        padding: 10px;
+      }
+
+      h1 {
+        padding: 30px;
+        line-height: 1;
+      }
+
+      body {
+        margin-left: 283px;
+        margin-right: 283px;
+      }
+    </style>
+  </head>
+
+  <body>
+      <p>
+        You are here:
+        <a href="">Home</a>
+        &#8227;
+        <a href="">Dive Into HTML5 </a>
+        &#8227;
+      </p>
+      <h1 align="center">
+        <font face = "Comic Sans MS" size="10">
+          <br>
+          №11.
+          <br>
+          MANIPULATING HISTORY
+          <br>
+          FOR FUN &amp; PROFIT
+        </font>
+      </h1>
+      <p align="center">
+        <a href="">show table of contents</a>
+      
+
+      </p>
+        <h2 align="center">&#10087;</h2>
+      <h1 align="center"><font face="Comic Sans MS">DIVING IN</face></h1>
+      <p><img src="img/aoc-t.png" alt="T" width="100" height="100" align="left">
+        <font face="Copperplate">
+        he browser location bar is perhaps the geekiest mainstream piece of user interface in the world.
+        There are URLs on billboards, on the sides of trains, and even in street graffiti. Combined with
+        the back button — easily the most important button in the browser — you have a powerful way to go
+        forward and backward through the vast set of intertwingled resources called the Web.
+        </font>
+      </p>
+      <p>
+        <font face="Copperplate">
+        The <a href="">HTML5 history API</a> is a standardized way to manipulate the browser history via script.
+        Part of this API — navigating the history — has been available in previous versions of HTML. The new parts
+        in HTML5 include a way to add entries to the browser history, to visibly change the URL in the browser location
+        bar (without triggering a page refresh), and an event that fires when those entries are removed from the stack
+        by the user pressing the browser’s back button. This means that the URL in the browser location bar can continue
+        to do its job as a unique identifier for the current resource, even in script-heavy applications that don’t ever
+        perform a full page refresh.
+        </font>
+      </p>
+      <h2 align="center">&#10087;</h2>
+      <h1 align="center">THE WHY</h1>
+      <p><img src="img/3.png" alt="demon reading book" width="218" height="231" align="left">
+      </p>
+      <p>
+        <font face="Copperplate">
+        Why would you manually manipulate the browser location? After all, a simple link can navigate to a new URL; that’s the
+        way the web has worked for 20 years. And it will continue to work that way. This API doesn’t try to subvert the web.
+        Just the opposite. In recent years, web developers have found new and exciting ways of subverting the web without any
+        help from emerging standards. The HTML5 history API is actually designed to ensure that URLs continue to be useful in
+        script-heavy web applications.
+        </font>
+      </p>
+      <p>
+        <font face="Copperplate">
+        Going back to first principles, what does a URL do? It identifies a unique resource. You can link to it directly; you
+        can bookmark it; search engines can index it; you can copy and paste it and email it to someone else, who can click
+        it and end up seeing the same resource you saw originally. These are all excellent qualities. URLs matter.
+        </font>
+      </p>
+      <p>
+        <font face="Copperplate">
+        So we want unique resources to have unique URLs. But at the same time, browsers have always had a fundamental
+        limitation: if you change the URL, even through script, it triggers a roundtrip to the remote web server and a
+        full page refresh. This takes time and resources, and it seems especially wasteful when you are navigating to a
+        page that is substantially similar to the current page. Everything on the new page gets downloaded, even the parts
+        that are exactly the same as the current page. There is no way tell a browser to change the URL but only download
+        half a page.
+        </font>
+      </p>
+      <p>
+        <font face="Copperplate">
+        The HTML5 history API lets you do this. Instead of triggering a full page refresh, you can use script to, in essence,
+        download half a page. This illusion is tricky to pull off, and it requires some work on your part. Are you watching
+        closely?
+        </font>
+      </p>
+      <p><img src="img/2.png" width="287" height="238" alt="magician performing a card trick" align="right"></p>
+      <p>
+        <font face="Copperplate">
+        Let’s say you have two pages, page A and page B. The two pages are 90% identical; only 10% of the page content is
+        different. The user navigates to page A, then tries to navigate to page B. But instead of triggering a full page
+        refresh, you interrupt this navigation and do the following steps manually:
+        </font>
+      </p>
+      <ol>
+        <font face="Copperplate">
+        <li><em>Load the 10% of the page</em> from page B that is different from page A (probably using XMLHttpRequest).
+          This will require some server-side changes to your web application. You will need to write code to return just
+          the 10% of page B that is different from page A. This can be a hidden URL or query parameter that the end user
+          would not normally see.
+          </li>
+        <li><em>Swap in the changed content</em> (using innerHTML or other DOM methods). You may also need to reset
+          any event handlers on elements within the swapped-in content.
+          </li>
+        <li><em>Update the browser location bar</em> with the URL> of page B, using a particular method from the HTML5
+          history API> that I’ll show you in a moment.
+          </li>
+          </font>
+        </ol>
+        <p><font face="Copperplate">
+          At the end of this illusion (if you executed it correctly), the browser ends up with a DOM that is identical to
+          page B, just as if you had navigated to page B directly. The browser location bar ends up with a URL that is identical
+          to page B, just as if you had navigated to page B directly. But you never really did navigate to page B, and you never
+          did a full page refresh. That’s the illusion. But because the “compiled” page looks the same as page B and has the same
+          URL as page B, the user should never notice the difference (nor appreciate all your hard work micromanaging their
+          experience).
+           </font>
+        </p>
+        <p>
+        <h2 align="center">&#10087;</h2>
+        </p>
+        <h1 align="center">The How</h1>
+        <p><font face="Copperplate">
+          The HTML5 history API is just a handful of methods on the window.history object, plus one event on the window object.
+          You can use these to <a href="">detect support for the history API</a>. Support is currently limited to the very latest
+          versions of a few browsers, putting these techniques squarely in the “progressive enhancement” camp.
+           </font>
+        </p>
+        <table align="center" style="width: 750px">
+          <caption>HISTORY.PUSHSTATE SUPPORT</caption>
+            <thead align="center">
+              <tr><th>IE</th><th>Firefox</th><th>Safari</th><th>Chrome</th><th>Opera</th><th>iPhone</th><th>Android</th></tr>
+            </thead>
+            <tbody align="center">
+              <tr><td>·</td><td>4.0+</td><td>5.0+</td><td>8.0+</td><td>11.50+</td><td>4.2.1+</td><td>·</td></tr>
+              </tbody>
+        </table>
+        <p><font face="Copperplate">
+          <a href="">dive into dogs</a> is a straightforward but non-trivial example of using the HTML5 history API. It
+          demonstrates a common pattern: a long article with an associated inline photo gallery. In a supported browser,
+          navigating the Next and Previous links in the photo gallery will update the photo in place <em>and update the URL
+          in the browser location bar</em>, without triggering a full page refresh. In unsupported browsers — or, indeed,
+          supported browsers where the user has disabled scripting — the links simply function as regular links, taking you
+          to a new page with a full page refresh.
+           </font>
+        </p>
+          <p><font face="Copperplate">
+            This brings up an important point:
+             </font>
+          </p>
+          <h2 class="tablename">PROFESSOR MARKUP SAYS</h2>
+              <div class="content">
+                <div>
+                  <p><img src="img/5.png" alt="K" width="150" height="170" align="right">
+                    <font face="Copperplate" size="+1"><pre>
+                      If your web application fails in browsers with scripting disabled, Jakob Nielsen’s dog will come to your house and shit on your carpet.
+
+
+
+                    </pre></font>
+                  </p>
+                </div>
+              </div>
+            <h2><font face="Comic Sans MS">&#8630; The pledge</font></h2>
+            <pre><code><font face="Arial">
+            &lt;aside id="gallery"&gt;
+              &lt;p class="photonav"&gt;
+                &lt;a id="photonext" href="casey.html"&gt;Next &amp;gt;&lt;/a&gt;
+                &lt;a id="photoprev" href="adagio.html"&gt;&amp;lt; Previous&lt;/a&gt;
+              &lt;/p&gt;
+              &lt;figure id="photo"&gt;
+                &lt;img id="photoimg" src="gallery/1972-fer-500.jpg"
+                        alt="Fer" width="500" height="375"&gt;
+                &lt;figcaption&gt;Fer, 1972&lt;/figcaption&gt;
+              &lt;/figure&gt;
+            &lt;/aside&gt;</font></code></pre>
+            <p><font face="Copperplate">
+              Nothing unusual there. The photo itself is an <code>&lt;img&gt;</code> inside a <code>&lt;figure&gt;</code>,
+              the links are just regular <code>&lt;a&gt;</code> elements, and the entire thing is wrapped in an
+              <code>&lt;aside&gt;</code>. It’s important that these are just regular links that actually work. All the code
+              that follows is behind a <a href="">detection script</a>. If the user is using an unsupported browser, none of
+              our fancy history API code will ever be executed. And of course, there’s always some users with scripting disabled
+              altogether.
+              </font>
+            </p>
+            <p><font face="Copperplate">
+              The main driver function gets each of these links and passes it to a function, addClicker(), which does the
+              actual work of setting up the custom click handler.
+              </font>
+            </p>
+            <pre><code><font face="Arial">
+                            function setupHistoryClicks() {
+                addClicker(document.getElementById("photonext"));
+                addClicker(document.getElementById("photoprev"));
+              }
+              </font>
+            </code></pre>
+            <p><font face="Copperplate">
+              This is the addClicker() function. It takes an <code>&lt;a&gt;</code> element and adds a click handler. And within this click
+              handler is where it gets interesting.
+                </font>
+              </p>
+            <pre><code><font face="Arial">
+                  function addClicker(link) {
+              link.addEventListener("click", function(e) {
+                swapPhoto(link.href);
+                history.pushState(null, null, link.href);
+                e.preventDefault();
+              }, false);
+            }
+            </font>
+          </code></pre>
+          <p><h2><font face="Comic Sans MS">&#8604; Interesting</font></h2>
+            </p>
+          <p><font face="Copperplate">
+             The swapPhoto() function performs the first two steps of our <a href="">three-step illusion</a>. The first half of
+             the swapPhoto() function takes part of the URL of the navigation link itself — casey.html, adagio.html, &amp;
+             c. — and constructs a URL to a hidden page that contains nothing but the markup required by the next photo.
+              </font></p>
+              <pre><code><font face="Arial">
+              function swapPhoto(href) {
+                var req = new XMLHttpRequest();
+                req.open("GET",
+                         "http://diveintohtml5.info/examples/history/gallery/" +
+                           href.split("/").pop(),
+                         false);
+                req.send(null);
+                    </font>
+                </code></pre>
+                <p><font face="Copperplate">
+                  Here is a sample of the markup returned by <a href="">http://diveintohtml5.info/examples/history/gallery/casey.html</a>.
+                  (You can verify this in your browser by visiting that URL directly.)
+                    </font></p>
+                    <pre><code><font face="Arial">
+                                  &lt;p class="photonav"&gt;
+              &lt;a id="photonext" href="brandy.html"&gt;Next &amp;gt;&lt;/a&gt;
+              &lt;a id="photoprev" href="fer.html"&gt;&amp;lt; Previous&lt;/a&gt;
+            &lt;/p&gt;
+            &lt;figure id="photo"&gt;
+              &lt;img id="photoimg" src="gallery/1984-casey-500.jpg"
+                      alt="Casey" width="500" height="375"&gt;
+              &lt;figcaption&gt;Casey, 1984&lt;/figcaption&gt;
+            &lt;/figure&gt;</code></pre></font>
+            <p><font face="Copperplate">
+              Does that look familiar? It should. It’s the <a href="">same basic markup that the original page used</a>
+              to display the first photo.
+                </font>
+              </p>
+            <p><font face="Copperplate">
+              The second half of the swapPhoto() function performs the second step of our <a href="">three-step illusion</a>:
+              inserting this newly downloaded markup into the current page. Remember that there is an <code>&lt;aside&gt;</code>
+              wrapping the entire figure, photo, and caption. So inserting the new photo markup is a one-liner, setting the
+              innerHTML property of the <code>&lt;aside&gt;</code> to the responseText property returned from XMLHttpRequest.
+              </font></p>
+                <pre><code><font face="Arial">
+                  if (req.status == 200) {
+                    document.getElementById("gallery").innerHTML = req.responseText;
+                    setupHistoryClicks();
+                    return true;
+                  }
+                  return false;
+                }
+                </font></code></pre>
+                <p><font face="Copperplate">
+                  (Also notice the call to setupHistoryClicks(). This is necessary to reset the custom click event handlers on
+                  the newly inserted navigation links. Setting innerHTML wipes out any trace of the old links and their event
+                  handlers.)
+                  </font></p>
+                <p><font face="Copperplate">
+                  Now, let’s go back to the addClicker() function. After successfully swapping out the photo, there’s one more
+                  step in our <a href="">three-step illusion</a>: setting the URL in the browser location bar without refreshing
+                  the page.
+                    </font></p>
+                <h2><font face="Comic Sans MS">&#8630; The turn</font></h2>
+                <pre><code><font face="Arial">history.pushState(null, null, link.href);</font></code></pre>
+                <p><font face="Copperplate">
+                  The history.pushState() function takes three parameters:
+                </font></p>
+                <ol><font face="Copperplate">
+                  <li>state can be any JSON data structure. It is passed back to the popstate event hander, which you’ll learn
+                    about in just a moment. We don’t need to track any state in this demo, so I’ve left it as null.
+                  </li>
+                  <li>title can be any string. This parameter is currently unused by major browsers. If you want to set the page
+                      title, you should store it in the state argument and set it manually in your popstate callback.
+                  </li>
+                  <li>url can be, well, any URL. This is the URL you want to appear in the browser’s location bar.
+                  </li>
+                </font>
+                </ol>
+                <p><font face="Copperplate">Calling history.pushState will immediately change the URL in the browser’s location bar. So is that the end
+                  of the illusion? Well, not quite. We still need to talk about what happens when the user presses the
+                  all-important back button.
+                </font>
+                </p>
+                <p><font face="Copperplate">
+                  Normally when the user navigates to a new page (with a full page refresh), the browser pushes the new URL
+                  onto its history stack and downloads and draws the new page. When the user presses the back button, the
+                  browser pops one page off its history stack and redraws the previous page. But what happens now that you’ve
+                  short-circuited this navigation to avoid a full page refresh? Well, you’ve faked “moving forward” to a new
+                  URL, so now you also need to fake “moving backward” to the previous URL. And the key to faking “moving
+                  backwards” is the popstate event.
+                </font></p>
+                <h2><font face="Comic Sans MS">&#8630; The prestige</font></h2>
+                <pre><code><font face="Arial">window.addEventListener("popstate", function(e) {
+                    swapPhoto(location.pathname);
+                });</font></code></pre>
+                <p><font face="Copperplate">
+                  After you’ve used the history.pushState() function to push a fake URL onto the browser’s history stack,
+                  when the user presses the back button, the browser will fire a popstate event on the window object. This is
+                  your chance to complete the illusion once and for all. Because making something disappear isn't enough; you
+                  have to bring it back.
+                </font></p>
+                <p><font face="Copperplate">
+                  In this demonstration, “bringing it back” is as simple as swapping in the original photo, which we do by
+                  calling the swapPhoto() with the current location. By the time your popstate callback is called, the URL
+                  visible in the browser’s location bar has been changed to the previous URL. Also, the global location
+                  property has already been updated with the previous URL.
+                </font></p>
+                <p><font face="Copperplate">
+                  To help you visualize this, let’s step through the entire illusion from the beginning
+                  to the end:
+                </font></p>
+                <ul><font face="Copperplate">
+                  <li>User loads <a href="">http://diveintohtml5.info/examples/history/fer.html</a>, sees story and a photo of Fer.
+                  </li>
+                  <li>User clicks the link labeled “Next,” an <code>&lt;a&gt;</code> element whose href property is <a href="">
+                    http://diveintohtml5.info/examples/history/casey.html</a>.
+                  </li>
+                  <li>Instead of navigating <code><a href="examples/history/casey.html">http://diveintohtml5.info/examples/history/casey.html</a></code>
+                    with a full page refresh, the custom click handler on the <code>&lt;a&gt;</code> element traps the click and executes its
+                    own code.
+                  </li>
+                  <li>Our custom click handler calls the swapPhoto() function, which creates an XMLHttpRequest object to synchronously
+                    download the HTML snippet located at <a href="">http://diveintohtml5.info/examples/history/<strong>gallery</strong>/casey.html</a>.
+                  </li>
+                  <li>The swapPhoto() function sets the innerHTML property of the photo gallery wrapper (an <code>&lt;aside&gt;</code> element)
+                    , thereby replacing the captioned photo of Fer with a captioned photo of Casey.
+                  </li>
+                  <li>Finally, our custom click handler calls the history.pushState() function to manually change the URL in the browser’s
+                    location bar to <a href="">http://diveintohtml5.info/examples/history/casey.html</a>.
+                  </li>
+                  <li>User clicks the browser’s back button.</li>
+                  <li>The browser notices that a URL has been manually pushed onto the history stack (by the history.pushState()
+                   function). Instead of navigating to the previous URL and redrawing the entire page, the browser simply
+                   updates the location bar to the previous URL (<a href="">http://diveintohtml5.info/examples/history/fer.html
+                   </a>) and fires a popstate event.
+                  </li>
+                  <li>Our custom popstate handler calls the swapPhoto() function again, this time with the previous URL that
+                    by now is already visible in the browser’s location bar.
+                  </li>
+                  <li>Again using XMLHttpRequest, the swapPhoto() function downloads a snippet of HTML located at <a href="">
+                    http://diveintohtml5.info/examples/history/<strong>gallery</strong>/fer.html</a> and sets the innerHTML property of
+                    the <code>&lt;aside&gt;</code> wrapper element, thereby replacing the captioned photo of Casey with a captioned photo
+                    of Fer.
+                  </li>
+                </font></ul>
+                <p><font face="Copperplate">
+                  The illusion is complete. All visible evidence (the content of the page, and the URL in the location bar)
+                  suggests to the user that they have navigated forward one page and backward one page. But no full page
+                  refresh ever occurred — it was all a meticulously executed illusion.
+                </font>
+                </p>
+                <p>
+                <h2 align="center">&#10087;</h2></p>
+                <h1 align="center">Further Reading</h1>
+                <ul><font face="Copperplate">
+                <li><a href="">Session history and navigation</a> in the HTML5 draft standard
+                </li>
+                <li><a href="">Manipulating the browser history</a> on Mozilla Developer Center
+                </li>
+                <li><a href="">Simple history API demo</a>
+                </li>
+                <li><a href="">20 Things I Learned About Browsers and the Web</a>, an advanced demo that uses the history API and other HTML5 techniques
+                </li>
+                <li><a href="">Using HTML5 today</a> describes <a href="">Facebook’s</a> use of the history API
+                </li>
+                <li><a href="">The Tree Slider</a> describes <a href="">Github’s</a> use of the history API
+                </li>
+                <li><a href="">History.js</a>, a meta-API for manipulating history in both newer and older browsers
+                </li>
+              </font>
+              </ul>
+                <h2 align="center">&#10087;</h2></p>
+                <p><font face="Copperplate">
+                  This has been “Manipulating History for Fun &amp; Profit.” The <a href="">full table of contents</a>
+                  has more if you’d like to keep reading.
+                </font>
+                </p>
+                <h2 class="tablename">Did You Know?</h2>
+                <div class="content">
+                <div>
+                    <p><img src="img/1.jpg" alt="T" width="150" height="170" align="right">
+                      <font face="Copperplate">
+                      In association with Google Press, O’Reilly is distributing this book in a variety of formats,
+                      including paper, ePub, Mobi, and DRM-free PDF. The paid edition is called “HTML5: Up &amp;
+                      Running,” and it is available now. This chapter is not yet included in the paid edition, so
+                      consider it a bonus.
+                    </font>
+                  </p>
+                  <p><font face="Copperplate">
+                    If you liked this chapter and want to show your appreciation, you can <a href="">buy “HTML5: Up &amp;
+                    Running” with this affiliate link</a> or <a href="">buy an electronic edition directly from O’Reilly</a>.
+                    You’ll get a book, and I’ll get a buck. I do not currently accept direct donations.
+                  </p>
+                </div>
+              </div>
+                <p align="center">Copyright MMIX–MMXI <a href="">Mark Pilgrim</a></p>
+                <p align="center"><input type="text" size="25" placeholder="powered by Google™"><button>Search</button></p>
+          </body>
+</html>
