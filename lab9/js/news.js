@@ -21,14 +21,36 @@ function newsTemplate(news) {
 var title = news.title;
 var body = news.body;
 var picture = news.picture;
+var button = document.createElement('input');
+
+button.type  = 'button';
+button.addEventListener('click', function() {
+    alert(add);
+}, false);
 
 return `
     <div id="content_wrapper_news">
-      <a href="#" class="news_table">
+      <div href="#" class="news_table">
         <img src="${picture}" alt="${title}">
         <h1>${body}</h1>
-      </a>
+      <br>
+      <button onclick="myFunction()">DELETE ME</button>
+      </div>
 `
+}
+
+function myFunction() {
+  if(useLocalStorage){
+    localStorage.clear();
+    alert("Вашу новину видалено успішно!");
+    location.reload();
+    show();
+  }
+  else {
+      window.indexedDB.deleteDatabase("news_data");
+      location.reload();
+      show();
+  }
 }
 
 function show(){
@@ -48,7 +70,10 @@ function show(){
         );
     });
   }
-  } else{
+  }
+  else if (!isOnline()) return; 
+
+  else {
     var openDB = indexedDB.open("news_data", 1);
     openDB.onupgradeneeded = function() {
         var db = openDB.result;
@@ -67,7 +92,7 @@ function show(){
         if (cursor) {
           var tempNews = new News(cursor.value.title, cursor.value.body, cursor.value.picture);
           //console.log(tempFeed);
-            //feedbacks.push(tempFeed);
+          //feedbacks.push(tempFeed);
           $('#content_news').append(
             newsTemplate(tempNews),
           );
